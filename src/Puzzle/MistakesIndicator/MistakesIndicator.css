@@ -1,0 +1,13 @@
+.bubble {
+    height: 16px;
+    width: 16px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+}
+.description {
+    font-family: 'Libre Franklin', sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 200;
+    font-style: normal;
+}
