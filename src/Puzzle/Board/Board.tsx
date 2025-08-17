@@ -1,11 +1,21 @@
+import Button from '../HelperButtons/Button/Button'
 import './Board.css'
 
 const Cell = ({ content }: { content: string }) => {
+    const selectedCells: string[] = []
+
+    const handleClickedCell = () => {
+        console.log(`Clicked ${content}`)
+        selectedCells.push(content)
+        console.log(`Array: ${selectedCells}`)
+    }
     return (
         <>
-            <div className="rounded-lg m-1 flex items-center justify-center cell-content bg-[#efefe6]">
-                <p className="p-7"> {content} </p>
-            </div>
+            <Button
+                callbackFunction={handleClickedCell}
+                content={content}
+                className="rounded-lg m-1 cell-content flex items-center justify-center bg-[#efefe6] min-h-[60px] sm:min-h-[80px] md:min-h-[100px] hover:cursor:pointer"
+            ></Button>
         </>
     )
 }
@@ -23,7 +33,7 @@ const Board = () => {
         { category: 'Vegetables', item: 'Cauliflower' },
         { category: 'Vegetables', item: 'Wheat' },
         { category: 'Vegetables', item: 'Kale' },
-        { category: 'Vegetables', item: 'Radish' },
+        { category: 'Vegetables', item: 'Bradish' },
         { category: 'Fall seeds', item: 'Broccoli Seeds' },
         { category: 'Fall seeds', item: 'Cranberry Seeds' },
         { category: 'Fall seeds', item: 'Corn Seeds' },
