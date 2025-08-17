@@ -1,15 +1,14 @@
-
 import './App.css'
+import Header from './Header/Header'
+import Puzzle from './Puzzle/Puzzle'
 
 function App() {
-
-  return (
-    <>
-      <div className="grid grid-cols-4 grid-rows-4">
-        <p>Hello World</p>
-      </div>
-    </>
-  )
+    return (
+        <>
+            <Header></Header>
+            <Puzzle></Puzzle>
+        </>
+    )
 }
 
 export default App
