@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Category, Data, Item } from '../utils/models/Data'
+import type { Category, Data, ICell, Item } from '../utils/models/Data'
 import Cell from './Board/Board'
 import MistakesIndicator from './MistakesIndicator/MistakesIndicator'
 import './Puzzle.css'
@@ -56,7 +56,7 @@ const Puzzle = () => {
         ],
     }
 
-    const clickCallbackFunction = (item: Item) => {
+    const cellClickCallbackFunction = (item: Item) => {
         console.log(`Clicked ${item.item}`)
         const itemName = item.item.toUpperCase()
 
@@ -84,9 +84,14 @@ const Puzzle = () => {
             <div className="flex justify-center">
                 <div className="grid grid-cols-4 grid-rows-4">
                     {data.categories
-                        .flatMap((category: Category) => category.items)
+                        .flatMap((category: Category) =>
+                            category.items.map((item) => ({
+                                ...item,
+                                category: category.category,
+                            }))
+                        )
                         .sort((a, b) => a.position - b.position)
-                        .map((item: Item) => (
+                        .map((item: ICell) => (
                             <Cell
                                 key={item.position}
                                 content={item.item.toUpperCase()}
@@ -94,7 +99,10 @@ const Puzzle = () => {
                                     item.item.toUpperCase()
                                 )}
                                 clickCallbackFunction={() => {
-                                    clickCallbackFunction(item)
+                                    cellClickCallbackFunction({
+                                        item: item.item,
+                                        position: item.position,
+                                    })
                                 }}
                                 cellDisabled={
                                     !selectedCells.includes(

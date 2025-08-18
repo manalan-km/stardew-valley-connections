@@ -11,3 +11,9 @@ export interface Category {
 export interface Data {
     categories: Category[]
 }
+
+export interface ICell {
+    position: number,
+    category: string,
+    item: string
+}
