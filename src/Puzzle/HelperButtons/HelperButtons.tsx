@@ -1,6 +1,12 @@
 import Button from './Button/Button'
 
-const HelperButtons = () => {
+const HelperButtons = ({
+    disableDeselectAllButton = false,
+    disableSubmitButton = true,
+}: {
+    disableDeselectAllButton?: boolean
+    disableSubmitButton?: boolean
+}) => {
     const handleClickedHelperButton = (content: string) =>
         console.log(`Clicked ${content} Helper Buttons`)
     return (
@@ -18,6 +24,7 @@ const HelperButtons = () => {
                 callbackFunction={() => {
                     handleClickedHelperButton('Deselect All')
                 }}
+                disabled={disableDeselectAllButton}
             ></Button>
             <Button
                 className="mx-2 border-1 border-black-200"
@@ -25,6 +32,7 @@ const HelperButtons = () => {
                 callbackFunction={() => {
                     handleClickedHelperButton('Submit')
                 }}
+                disabled={disableSubmitButton}
             ></Button>
         </>
     )
