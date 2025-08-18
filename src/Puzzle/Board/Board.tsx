@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
-import Button from '../HelperButtons/Button/Button'
 import './Board.css'
 
 const Cell = ({

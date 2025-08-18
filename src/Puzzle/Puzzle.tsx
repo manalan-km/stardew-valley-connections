@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import type { Category, Data, Item } from '../utils/models/Data'
 import Cell from './Board/Board'
-import HelperButtons from './HelperButtons/HelperButtons'
 import MistakesIndicator from './MistakesIndicator/MistakesIndicator'
 import './Puzzle.css'
 
 import { format } from 'date-fns'
+import Button from './HelperButtons/Button/Button'
 
 const Puzzle = () => {
     const current_date = new Date()
@@ -111,7 +111,29 @@ const Puzzle = () => {
                 ></MistakesIndicator>
             </div>
             <div className="flex justify-center">
-                <HelperButtons></HelperButtons>
+                <Button
+                    className="mx-2 border-1 border-black-200 disabled:opacity-25"
+                    content="Shuffle"
+                    callbackFunction={() => {
+                        console.log('Shuffle')
+                    }}
+                ></Button>
+                <Button
+                    className="mx-2 border-1 border-black-200 disabled:opacity-25"
+                    content="Deselect All"
+                    callbackFunction={() => {
+                        setSelectedCells([])
+                    }}
+                    disabled={!(selectedCells.length > 0)}
+                ></Button>
+                <Button
+                    className="mx-2 border-1 bg-black text-white border-white-200 disabled:opacity-25"
+                    content="Submit"
+                    callbackFunction={() => {
+                        console.log('Submit')
+                    }}
+                    disabled={!(selectedCells.length === 4)}
+                ></Button>
             </div>
         </>
     )
