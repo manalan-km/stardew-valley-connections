@@ -1,11 +1,16 @@
 import { useState } from 'react'
-import type { Category, Data, ICell, Item } from '../utils/models/Data'
+import type { Category, Data, ICell } from '../utils/models/Data'
 import Cell from './Board/Board'
 import MistakesIndicator from './MistakesIndicator/MistakesIndicator'
 import './Puzzle.css'
 
 import { format } from 'date-fns'
 import Button from './HelperButtons/Button/Button'
+import {
+    checkIfCellExist,
+    compareTwoCells,
+    shuffleArray,
+} from '../utils/functions/utilFunctions'
 
 const Puzzle = () => {
     const current_date = new Date()
@@ -13,9 +18,9 @@ const Puzzle = () => {
     const year = format(current_date, 'yyyy')
 
     const [mistakesLeft, setMistakesLeft] = useState<number>(4)
-    const [selectedCells, setSelectedCells] = useState<string[]>([])
+    const [selectedCells, setSelectedCells] = useState<ICell[]>([])
 
-    const data: Data = {
+    const api_data: Data = {
         categories: [
             {
                 category: 'Monster Loot',
@@ -55,21 +60,68 @@ const Puzzle = () => {
             },
         ],
     }
+    const [data, setData] = useState<ICell[]>(
+        api_data.categories
+            .flatMap((category: Category) =>
+                category.items.map((item) => ({
+                    ...item,
+                    category: category.category,
+                }))
+            )
+            .sort((a, b) => a.position - b.position)
+    )
 
-    const cellClickCallbackFunction = (item: Item) => {
-        console.log(`Clicked ${item.item}`)
-        const itemName = item.item.toUpperCase()
-
+    const cellClickCallbackFunction = (selectedCell: ICell) => {
         setSelectedCells((prev) => {
-            if (prev.includes(itemName)) {
-                return prev.filter((cell) => cell !== itemName)
-            } else {
+            //remove selected Cell from selectedCells array if it exists
+            if (checkIfCellExist(selectedCell, prev)) {
+                const previous = prev.filter((cell) => {
+                    if (!compareTwoCells(cell, selectedCell)) {
+                        return cell
+                    }
+                })
+
+                return previous
+            }
+            //add if it doesnt exist and there are < 4 selected Cells
+            else {
                 if (prev.length < 4) {
-                    return [...prev, itemName]
+                    return [...prev, selectedCell]
                 }
                 return prev
             }
         })
+    }
+
+    const handleShuffleClick = () => {
+        const positions = Array.from(Array(16).keys(), (x) => x + 1)
+        const shuffledPositions: number[] = shuffleArray(positions)
+
+        const shuffledData = data.map((value, index): ICell => {
+            return {
+                position: shuffledPositions[index],
+                item: value.item,
+                category: value.category,
+            }
+        })
+
+        setData(shuffledData.sort((a, b) => a.position - b.position))
+
+        if (selectedCells.length) {
+            const meow: ICell[] = []
+            shuffledData.forEach((val) =>
+                selectedCells.forEach((selectedCell) => {
+                    if (
+                        selectedCell.item === val.item &&
+                        selectedCell.category === val.category
+                    ) {
+                        meow.push({ ...val, position: val.position })
+                    }
+                })
+            )
+
+            setSelectedCells(meow)
+        }
     }
 
     return (
@@ -83,34 +135,20 @@ const Puzzle = () => {
             </div>
             <div className="flex justify-center">
                 <div className="grid grid-cols-4 grid-rows-4">
-                    {data.categories
-                        .flatMap((category: Category) =>
-                            category.items.map((item) => ({
-                                ...item,
-                                category: category.category,
-                            }))
-                        )
-                        .sort((a, b) => a.position - b.position)
-                        .map((item: ICell) => (
-                            <Cell
-                                key={item.position}
-                                content={item.item.toUpperCase()}
-                                isSelected={selectedCells.includes(
-                                    item.item.toUpperCase()
-                                )}
-                                clickCallbackFunction={() => {
-                                    cellClickCallbackFunction({
-                                        item: item.item,
-                                        position: item.position,
-                                    })
-                                }}
-                                cellDisabled={
-                                    !selectedCells.includes(
-                                        item.item.toUpperCase()
-                                    ) && selectedCells.length == 4
-                                }
-                            />
-                        ))}
+                    {data.map((item: ICell) => (
+                        <Cell
+                            key={item.position}
+                            content={item.item.toUpperCase()}
+                            isSelected={checkIfCellExist(item, selectedCells)}
+                            clickCallbackFunction={() => {
+                                cellClickCallbackFunction(item)
+                            }}
+                            cellDisabled={
+                                !checkIfCellExist(item, selectedCells) &&
+                                selectedCells.length == 4
+                            }
+                        />
+                    ))}
                 </div>
             </div>
             <div className="flex justify-center">
@@ -123,7 +161,7 @@ const Puzzle = () => {
                     className="mx-2 border-1 border-black-200 disabled:opacity-25"
                     content="Shuffle"
                     callbackFunction={() => {
-                        console.log('Shuffle')
+                        handleShuffleClick()
                     }}
                 ></Button>
                 <Button
