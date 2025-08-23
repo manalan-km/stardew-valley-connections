@@ -11,6 +11,7 @@ import {
     compareTwoCells,
     shuffleArray,
 } from '../utils/functions/utilFunctions'
+import { MAX_ITEMS_IN_A_CATEGORY } from '../utils/constants/constants'
 
 const Puzzle = () => {
     const current_date = new Date()
@@ -85,7 +86,7 @@ const Puzzle = () => {
             }
             //add if it doesnt exist and there are < 4 selected Cells
             else {
-                if (prev.length < 4) {
+                if (prev.length < MAX_ITEMS_IN_A_CATEGORY) {
                     return [...prev, selectedCell]
                 }
                 return prev
@@ -124,6 +125,23 @@ const Puzzle = () => {
         }
     }
 
+    const handleSubmitClick = () => {
+        const categoryToBeChecked = selectedCells[0].category
+        const selectedCell = selectedCells.filter(
+            (cellVal) => cellVal.category === categoryToBeChecked
+        )
+        if (selectedCell.length === MAX_ITEMS_IN_A_CATEGORY) {
+            console.log('Game Over')
+        } else {
+            const newNumberOfMistakesLeft = mistakesLeft - 1
+            setMistakesLeft(newNumberOfMistakesLeft)
+
+            if (newNumberOfMistakesLeft === 0) {
+                console.log('No more attempts left!')
+            }
+        }
+    }
+
     return (
         <>
             <div className="mx-20 my-10 ">
@@ -145,7 +163,7 @@ const Puzzle = () => {
                             }}
                             cellDisabled={
                                 !checkIfCellExist(item, selectedCells) &&
-                                selectedCells.length == 4
+                                selectedCells.length === MAX_ITEMS_IN_A_CATEGORY
                             }
                         />
                     ))}
@@ -176,9 +194,11 @@ const Puzzle = () => {
                     className="mx-2 border-1 bg-black text-white border-white-200 disabled:opacity-25"
                     content="Submit"
                     callbackFunction={() => {
-                        console.log('Submit')
+                        handleSubmitClick()
                     }}
-                    disabled={!(selectedCells.length === 4)}
+                    disabled={
+                        !(selectedCells.length === MAX_ITEMS_IN_A_CATEGORY)
+                    }
                 ></Button>
             </div>
         </>
