@@ -13,7 +13,13 @@ export interface Data {
 }
 
 export interface ICell {
-    position: number,
-    category: string,
+    position: number
+    category: string
     item: string
+}
+
+export interface SolvedCategory {
+    category: string
+    items: ICell[]
+    solvedOrder: number
 }

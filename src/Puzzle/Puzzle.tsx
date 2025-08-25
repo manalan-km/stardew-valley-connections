@@ -1,5 +1,10 @@
-import { useState } from 'react'
-import type { Category, Data, ICell } from '../utils/models/Data'
+import { useEffect, useState } from 'react'
+import type {
+    Category,
+    Data,
+    ICell,
+    SolvedCategory,
+} from '../utils/models/Data'
 import Cell from './Board/Board'
 import MistakesIndicator from './MistakesIndicator/MistakesIndicator'
 import './Puzzle.css'
@@ -12,6 +17,7 @@ import {
     shuffleArray,
 } from '../utils/functions/utilFunctions'
 import { MAX_ITEMS_IN_A_CATEGORY } from '../utils/constants/constants'
+import SolvedItems from './solvedItems/solvedItems'
 
 const Puzzle = () => {
     const current_date = new Date()
@@ -20,6 +26,13 @@ const Puzzle = () => {
 
     const [mistakesLeft, setMistakesLeft] = useState<number>(4)
     const [selectedCells, setSelectedCells] = useState<ICell[]>([])
+
+    const [solvedCategories, setSolvedCategories] = useState<SolvedCategory[]>(
+        []
+    )
+    const [isGameComplete, setIsGameComplete] = useState<boolean>(false)
+
+    const [disableButton, setDisableButton] = useState<boolean>(false)
 
     const api_data: Data = {
         categories: [
@@ -61,6 +74,7 @@ const Puzzle = () => {
             },
         ],
     }
+
     const [data, setData] = useState<ICell[]>(
         api_data.categories
             .flatMap((category: Category) =>
@@ -126,21 +140,49 @@ const Puzzle = () => {
     }
 
     const handleSubmitClick = () => {
+        console.log(selectedCells)
         const categoryToBeChecked = selectedCells[0].category
         const selectedCell = selectedCells.filter(
             (cellVal) => cellVal.category === categoryToBeChecked
         )
+
         if (selectedCell.length === MAX_ITEMS_IN_A_CATEGORY) {
-            console.log('Game Over')
+            const solvedCategory: SolvedCategory = {
+                category: categoryToBeChecked,
+                items: [...selectedCells],
+                solvedOrder: solvedCategories.length + 1,
+            }
+
+            setSolvedCategories((prev) => [...prev, solvedCategory])
+
+            const solvedItemNames = selectedCells.map((cell) => cell.item)
+            setData((prev) =>
+                prev.filter((cell) => !solvedItemNames.includes(cell.item))
+            )
+
+            setSelectedCells([])
+
+            if (solvedCategories.length + 1 === 4) {
+                console.log('Game Complete! All categories found!')
+            }
         } else {
             const newNumberOfMistakesLeft = mistakesLeft - 1
             setMistakesLeft(newNumberOfMistakesLeft)
 
+            setSelectedCells([])
+
             if (newNumberOfMistakesLeft === 0) {
-                console.log('No more attempts left!')
+                setDisableButton(true)
             }
         }
     }
+
+    useEffect(() => {
+        if (solvedCategories.length === 4) {
+            setIsGameComplete(true)
+            setDisableButton(true)
+        }
+    }, [solvedCategories.length])
 
     return (
         <>
@@ -151,56 +193,97 @@ const Puzzle = () => {
             <div className="description flex justify-center my-4">
                 Create four groups of four!
             </div>
-            <div className="flex justify-center">
-                <div className="grid grid-cols-4 grid-rows-4">
-                    {data.map((item: ICell) => (
-                        <Cell
-                            key={item.position}
-                            content={item.item.toUpperCase()}
-                            isSelected={checkIfCellExist(item, selectedCells)}
-                            clickCallbackFunction={() => {
-                                cellClickCallbackFunction(item)
-                            }}
-                            cellDisabled={
-                                !checkIfCellExist(item, selectedCells) &&
-                                selectedCells.length === MAX_ITEMS_IN_A_CATEGORY
-                            }
-                        />
-                    ))}
+
+            {solvedCategories.length > 0 && (
+                <SolvedItems solvedCategories={solvedCategories}></SolvedItems>
+            )}
+
+            {
+                <div className="flex justify-center">
+                    <div className="w-full max-w-md sm:max-w-lg md:max-w-xl">
+                        <div className="grid grid-cols-4 gap-2">
+                            {data.map((item: ICell) => (
+                                <Cell
+                                    key={item.position}
+                                    content={item.item.toUpperCase()}
+                                    isSelected={checkIfCellExist(
+                                        item,
+                                        selectedCells
+                                    )}
+                                    clickCallbackFunction={() => {
+                                        cellClickCallbackFunction(item)
+                                    }}
+                                    cellDisabled={
+                                        !checkIfCellExist(
+                                            item,
+                                            selectedCells
+                                        ) &&
+                                        selectedCells.length ===
+                                            MAX_ITEMS_IN_A_CATEGORY &&
+                                        !disableButton
+                                    }
+                                />
+                            ))}
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div className="flex justify-center">
-                <MistakesIndicator
-                    numberOfMistakesLeft={mistakesLeft}
-                ></MistakesIndicator>
-            </div>
-            <div className="flex justify-center">
-                <Button
-                    className="mx-2 border-1 border-black-200 disabled:opacity-25"
-                    content="Shuffle"
-                    callbackFunction={() => {
-                        handleShuffleClick()
-                    }}
-                ></Button>
-                <Button
-                    className="mx-2 border-1 border-black-200 disabled:opacity-25"
-                    content="Deselect All"
-                    callbackFunction={() => {
-                        setSelectedCells([])
-                    }}
-                    disabled={!(selectedCells.length > 0)}
-                ></Button>
-                <Button
-                    className="mx-2 border-1 bg-black text-white border-white-200 disabled:opacity-25"
-                    content="Submit"
-                    callbackFunction={() => {
-                        handleSubmitClick()
-                    }}
-                    disabled={
-                        !(selectedCells.length === MAX_ITEMS_IN_A_CATEGORY)
-                    }
-                ></Button>
-            </div>
+            }
+
+            {isGameComplete && (
+                <div className="text-center my-8">
+                    <h2 className="text-2xl font-bold text-green-600 announcement">
+                        Congratulations! You have solved today's puzzle!
+                    </h2>
+                </div>
+            )}
+
+            {(mistakesLeft === 0 || mistakesLeft < 0) && (
+                <div className="text-center my-8">
+                    <h2 className="text-2xl font-bold text-red-600 announcement">
+                        No more attempts left!
+                    </h2>
+                </div>
+            )}
+
+            {!isGameComplete && mistakesLeft > 0 && (
+                <>
+                    <div className="flex justify-center">
+                        <MistakesIndicator
+                            numberOfMistakesLeft={mistakesLeft}
+                        ></MistakesIndicator>
+                    </div>
+                    <div className="flex justify-center">
+                        <Button
+                            className="mx-2 border-1 border-black-200 disabled:opacity-25"
+                            content="Shuffle"
+                            callbackFunction={() => {
+                                handleShuffleClick()
+                            }}
+                        ></Button>
+                        <Button
+                            className="mx-2 border-1 border-black-200 disabled:opacity-25"
+                            content="Deselect All"
+                            callbackFunction={() => {
+                                setSelectedCells([])
+                            }}
+                            disabled={!(selectedCells.length > 0)}
+                        ></Button>
+                        <Button
+                            className="mx-2 border-1 bg-black text-white border-white-200 disabled:opacity-25"
+                            content="Submit"
+                            callbackFunction={() => {
+                                handleSubmitClick()
+                            }}
+                            disabled={
+                                !(
+                                    selectedCells.length ===
+                                    MAX_ITEMS_IN_A_CATEGORY
+                                )
+                            }
+                        ></Button>
+                    </div>
+                </>
+            )}
         </>
     )
 }
