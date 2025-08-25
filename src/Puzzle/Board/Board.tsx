@@ -12,8 +12,6 @@ const Cell = ({
     clickCallbackFunction: Function
     cellDisabled?: boolean
 }) => {
-
-    console.log(cellDisabled)
     return (
         <>
             <button

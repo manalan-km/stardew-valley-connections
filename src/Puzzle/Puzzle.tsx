@@ -140,7 +140,6 @@ const Puzzle = () => {
     }
 
     const handleSubmitClick = () => {
-        console.log(selectedCells)
         const categoryToBeChecked = selectedCells[0].category
         const selectedCell = selectedCells.filter(
             (cellVal) => cellVal.category === categoryToBeChecked
@@ -162,9 +161,7 @@ const Puzzle = () => {
 
             setSelectedCells([])
 
-            if (solvedCategories.length + 1 === 4) {
-                console.log('Game Complete! All categories found!')
-            }
+            
         } else {
             const newNumberOfMistakesLeft = mistakesLeft - 1
             setMistakesLeft(newNumberOfMistakesLeft)
