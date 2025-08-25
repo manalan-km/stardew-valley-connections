@@ -7,8 +7,6 @@ const HelperButtons = ({
     disableDeselectAllButton?: boolean
     disableSubmitButton?: boolean
 }) => {
-    const handleClickedHelperButton = (content: string) =>
-        console.log(`Clicked ${content} Helper Buttons`)
     return (
         <>
             <Button

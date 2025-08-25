@@ -1,0 +1,17 @@
+.category-content {
+    font-family: 'Libre Franklin', sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 20px;
+    line-weight: 25px;
+}
+
+.content {
+    font-family: 'Libre Franklin', sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 20px;
+    line-weight: 25px;
+}
