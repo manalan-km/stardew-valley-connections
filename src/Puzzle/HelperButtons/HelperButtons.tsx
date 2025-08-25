@@ -13,14 +13,12 @@ const HelperButtons = ({
                 className="mx-2 border-1 border-black-200 disabled:opacity-25"
                 content="Shuffle"
                 callbackFunction={() => {
-                    handleClickedHelperButton('Shuffle')
                 }}
             ></Button>
             <Button
                 className="mx-2 border-1 border-black-200 disabled:opacity-25"
                 content="Deselect All"
                 callbackFunction={() => {
-                    handleClickedHelperButton('Deselect All')
                 }}
                 disabled={disableDeselectAllButton}
             ></Button>
@@ -28,7 +26,6 @@ const HelperButtons = ({
                 className="mx-2 border-1 border-black-200 disabled:opacity-25"
                 content="Submit"
                 callbackFunction={() => {
-                    handleClickedHelperButton('Submit')
                 }}
                 disabled={disableSubmitButton}
             ></Button>
