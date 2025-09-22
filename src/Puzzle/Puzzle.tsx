@@ -19,6 +19,7 @@ import {
 import { MAX_ITEMS_IN_A_CATEGORY } from '../utils/constants/constants'
 import SolvedItems from './solvedItems/solvedItems'
 
+
 const Puzzle = () => {
     const current_date = new Date()
     const month_and_date = format(current_date, 'MMMM dd')
@@ -34,57 +35,31 @@ const Puzzle = () => {
 
     const [disableButton, setDisableButton] = useState<boolean>(false)
 
-    const api_data: Data = {
-        categories: [
-            {
-                category: 'Monster Loot',
-                items: [
-                    { item: 'Slime', position: 7 },
-                    { item: 'Void Essence', position: 12 },
-                    { item: 'Bug Meat', position: 3 },
-                    { item: 'Solar Essence', position: 15 },
-                ],
-            },
-            {
-                category: 'Mushrooms',
-                items: [
-                    { item: 'Chanterelle', position: 9 },
-                    { item: 'Morel', position: 1 },
-                    { item: 'Magma Cap', position: 14 },
-                    { item: 'Purple Mushroom', position: 6 },
-                ],
-            },
-            {
-                category: 'Vegetables',
-                items: [
-                    { item: 'Cauliflower', position: 11 },
-                    { item: 'Wheat', position: 4 },
-                    { item: 'Kale', position: 16 },
-                    { item: 'Bradish', position: 8 },
-                ],
-            },
-            {
-                category: 'Fall seeds',
-                items: [
-                    { item: 'Broccoli Seeds', position: 2 },
-                    { item: 'Cranberry Seeds', position: 13 },
-                    { item: 'Corn Seeds', position: 10 },
-                    { item: 'Artichoke Seeds', position: 5 },
-                ],
-            },
-        ],
-    }
 
-    const [data, setData] = useState<ICell[]>(
-        api_data.categories
-            .flatMap((category: Category) =>
-                category.items.map((item) => ({
-                    ...item,
-                    category: category.category,
-                }))
-            )
-            .sort((a, b) => a.position - b.position)
-    )
+    const [data, setData] = useState<ICell[]>([]) // Start with empty array
+
+    useEffect(() => {
+        const url = import.meta.env.SV_API_BASE_URL + '/challenge/' + format(current_date, "dd-MM-yyyy")
+        fetch(url)
+            .then((response) => response.json())
+            .then((api_data: Data) => {
+                console.log(api_data)
+                // Process the data HERE after it arrives
+                const processedData = api_data.categories
+                    .flatMap((category: Category) =>
+                        category.items.map((item) => ({
+                            ...item,
+                            category: category.category,
+                        }))
+                    )
+                    .sort((a, b) => a.position - b.position)
+
+                setData(processedData)
+            })
+            .catch((err) => {
+                console.log(err.message)
+            })
+    }, [])
 
     const cellClickCallbackFunction = (selectedCell: ICell) => {
         setSelectedCells((prev) => {
@@ -160,8 +135,6 @@ const Puzzle = () => {
             )
 
             setSelectedCells([])
-
-            
         } else {
             const newNumberOfMistakesLeft = mistakesLeft - 1
             setMistakesLeft(newNumberOfMistakesLeft)
