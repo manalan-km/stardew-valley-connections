@@ -56,9 +56,6 @@ const Puzzle = () => {
             return
         }
 
-        console.log(`Categories that are guessed:`, filteredCategories)
-        console.log(`data that are guessed:`, filteredItems)
-
         filteredCategories.forEach((category) => {
             const itemsInCategory = filteredItems.filter(
                 (item) => item.category === category
