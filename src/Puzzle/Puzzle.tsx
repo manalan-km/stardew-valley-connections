@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import type {
     Category,
     Data,
-    ICell,
+    ProcessedData,
     SolvedCategory,
 } from '../utils/models/Data'
 import Cell from './Board/Board'
@@ -19,14 +19,13 @@ import {
 import { MAX_ITEMS_IN_A_CATEGORY } from '../utils/constants/constants'
 import SolvedItems from './solvedItems/solvedItems'
 
-
 const Puzzle = () => {
     const current_date = new Date()
     const month_and_date = format(current_date, 'MMMM dd')
     const year = format(current_date, 'yyyy')
 
     const [mistakesLeft, setMistakesLeft] = useState<number>(4)
-    const [selectedCells, setSelectedCells] = useState<ICell[]>([])
+    const [selectedCells, setSelectedCells] = useState<ProcessedData[]>([])
 
     const [solvedCategories, setSolvedCategories] = useState<SolvedCategory[]>(
         []
@@ -35,33 +34,81 @@ const Puzzle = () => {
 
     const [disableButton, setDisableButton] = useState<boolean>(false)
 
+    const [data, setData] = useState<ProcessedData[]>([]) // Start with empty array
 
-    const [data, setData] = useState<ICell[]>([]) // Start with empty array
+    const [solvedOrder, setSolvedOrder] = useState<number>(1)
+
+    const filterGuessedCategories = (data: ProcessedData[]) => {
+        let guessedSolveOrder = solvedOrder
+        const filteredItems = data.filter((item) => item.isGuessed)
+
+        let filteredCategories: string[] = []
+
+        for (const dataItem of data) {
+            if (dataItem.isGuessed) {
+                filteredCategories.push(dataItem.category)
+            }
+        }
+
+        filteredCategories = [...new Set(filteredCategories)]
+
+        if (filteredCategories.length === 0) {
+            return
+        }
+
+        console.log(`Categories that are guessed:`, filteredCategories)
+        console.log(`data that are guessed:`, filteredItems)
+
+        filteredCategories.forEach((category) => {
+            const itemsInCategory = filteredItems.filter(
+                (item) => item.category === category
+            )
+
+            const solvedCategory: SolvedCategory = {
+                category: category,
+                items: [...itemsInCategory],
+                solvedOrder: guessedSolveOrder++,
+            }
+
+            setSolvedCategories((prev) => [...prev, solvedCategory])
+
+            const solvedItemNames = itemsInCategory.map((cell) => cell.item)
+            setData((prev) =>
+                prev.filter((cell) => !solvedItemNames.includes(cell.item))
+            )
+
+            setSelectedCells([])
+        })
+        setSolvedOrder(guessedSolveOrder)
+    }
 
     useEffect(() => {
-        const url = import.meta.env.SV_API_BASE_URL + '/challenge/' + format(current_date, "dd-MM-yyyy")
+        const url =
+            import.meta.env.SV_API_BASE_URL +
+            '/challenge/' +
+            format(current_date, 'dd-MM-yyyy')
         fetch(url)
             .then((response) => response.json())
             .then((api_data: Data) => {
-                console.log(api_data)
-                // Process the data HERE after it arrives
-                const processedData = api_data.categories
-                    .flatMap((category: Category) =>
-                        category.items.map((item) => ({
+                const processedData: ProcessedData[] = api_data.categories
+                    .flatMap((category: Category) => {
+                        return category.items.map((item) => ({
                             ...item,
                             category: category.category,
                         }))
-                    )
+                    })
                     .sort((a, b) => a.position - b.position)
-
                 setData(processedData)
+
+                filterGuessedCategories(processedData)
             })
             .catch((err) => {
                 console.log(err.message)
             })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const cellClickCallbackFunction = (selectedCell: ICell) => {
+    const cellClickCallbackFunction = (selectedCell: ProcessedData) => {
         setSelectedCells((prev) => {
             //remove selected Cell from selectedCells array if it exists
             if (checkIfCellExist(selectedCell, prev)) {
@@ -87,18 +134,19 @@ const Puzzle = () => {
         const positions = Array.from(Array(16).keys(), (x) => x + 1)
         const shuffledPositions: number[] = shuffleArray(positions)
 
-        const shuffledData = data.map((value, index): ICell => {
+        const shuffledData = data.map((value, index): ProcessedData => {
             return {
                 position: shuffledPositions[index],
                 item: value.item,
                 category: value.category,
+                isGuessed: value.isGuessed,
             }
         })
 
         setData(shuffledData.sort((a, b) => a.position - b.position))
 
         if (selectedCells.length) {
-            const meow: ICell[] = []
+            const meow: ProcessedData[] = []
             shuffledData.forEach((val) =>
                 selectedCells.forEach((selectedCell) => {
                     if (
@@ -124,16 +172,21 @@ const Puzzle = () => {
             const solvedCategory: SolvedCategory = {
                 category: categoryToBeChecked,
                 items: [...selectedCells],
-                solvedOrder: solvedCategories.length + 1,
+                solvedOrder: solvedOrder,
             }
 
             setSolvedCategories((prev) => [...prev, solvedCategory])
 
-            const solvedItemNames = selectedCells.map((cell) => cell.item)
             setData((prev) =>
-                prev.filter((cell) => !solvedItemNames.includes(cell.item))
+                prev.map((cell) => {
+                    if (cell.category === categoryToBeChecked) {
+                        cell.isGuessed = true
+                    }
+                    return cell
+                })
             )
 
+            setSolvedOrder(solvedOrder + 1)
             setSelectedCells([])
         } else {
             const newNumberOfMistakesLeft = mistakesLeft - 1
@@ -172,28 +225,32 @@ const Puzzle = () => {
                 <div className="flex justify-center">
                     <div className="w-full max-w-md sm:max-w-lg md:max-w-xl">
                         <div className="grid grid-cols-4 gap-2">
-                            {data.map((item: ICell) => (
-                                <Cell
-                                    key={item.position}
-                                    content={item.item.toUpperCase()}
-                                    isSelected={checkIfCellExist(
-                                        item,
-                                        selectedCells
-                                    )}
-                                    clickCallbackFunction={() => {
-                                        cellClickCallbackFunction(item)
-                                    }}
-                                    cellDisabled={
-                                        !checkIfCellExist(
+                            {data
+                                .filter(
+                                    (item: ProcessedData) => !item.isGuessed
+                                )
+                                .map((item: ProcessedData) => (
+                                    <Cell
+                                        key={item.position}
+                                        content={item.item.toUpperCase()}
+                                        isSelected={checkIfCellExist(
                                             item,
                                             selectedCells
-                                        ) &&
-                                        selectedCells.length ===
-                                            MAX_ITEMS_IN_A_CATEGORY &&
-                                        !disableButton
-                                    }
-                                />
-                            ))}
+                                        )}
+                                        clickCallbackFunction={() => {
+                                            cellClickCallbackFunction(item)
+                                        }}
+                                        cellDisabled={
+                                            !checkIfCellExist(
+                                                item,
+                                                selectedCells
+                                            ) &&
+                                            selectedCells.length ===
+                                                MAX_ITEMS_IN_A_CATEGORY &&
+                                            !disableButton
+                                        }
+                                    />
+                                ))}
                         </div>
                     </div>
                 </div>
