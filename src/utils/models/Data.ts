@@ -1,11 +1,13 @@
 export interface Item {
     item: string
-    position: number
+    position: number,
+    isGuessed: boolean
 }
 
 export interface Category {
     category: string
-    items: Item[]
+    items: Item[],
+    isGuessed: boolean
 }
 
 export interface Data {
@@ -22,4 +24,11 @@ export interface SolvedCategory {
     category: string
     items: ICell[]
     solvedOrder: number
+}
+
+export interface ProcessedData {
+    category: string;
+    item: string;
+    position: number;
+    isGuessed: boolean
 }
