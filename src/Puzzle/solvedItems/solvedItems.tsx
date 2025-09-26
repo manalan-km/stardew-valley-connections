@@ -1,4 +1,6 @@
+import { animate } from 'animejs'
 import type { SolvedCategory } from '../../utils/models/Data'
+import { useEffect } from 'react'
 
 const SolvedItems = ({
     solvedCategories,
@@ -11,15 +13,37 @@ const SolvedItems = ({
         return colors[solvedOrder - 1] || '#95a5a6' // solvedOrder starts at 1
     }
 
+    const animateDiv = () => {
+        const solvedCategoryDivs = document.querySelectorAll('.solvedCategory')
+
+        if (solvedCategoryDivs.length === 0) {
+            return
+        }
+
+        const elementToAnimate =
+            solvedCategoryDivs[solvedCategoryDivs.length - 1]
+        
+            animate(elementToAnimate, {
+            scale: [1, 1.1, 1],
+            duration: 400,
+        })
+    }
+    useEffect(() => {
+        animateDiv()
+    }, [solvedCategories])
+
     return (
-        <div className="flex justify-center mb-2">
+        <div
+            className="flex justify-center mb-2 mx-2"
+            style={{ border: '1px border black' }}
+        >
             <div className="w-full max-w-md sm:max-w-lg md:max-w-xl">
                 {solvedCategories
                     .sort((a, b) => a.solvedOrder - b.solvedOrder)
                     .map((solvedCat) => (
                         <div
                             key={solvedCat.category}
-                            className="mb-2 p-4 rounded"
+                            className="mb-2 p-4 rounded solvedCategory"
                             style={{
                                 backgroundColor: getColorByOrder(
                                     solvedCat.solvedOrder
