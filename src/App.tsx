@@ -1,12 +1,12 @@
 import './App.css'
 import Header from './Header/Header'
-import Puzzle from './Puzzle/Puzzle'
+import PuzzleHandler from './Puzzle/PuzzleHander'
 
 function App() {
     return (
         <>
             <Header></Header>
-            <Puzzle></Puzzle>
+            <PuzzleHandler></PuzzleHandler>
         </>
     )
 }

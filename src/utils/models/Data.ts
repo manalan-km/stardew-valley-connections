@@ -32,3 +32,26 @@ export interface ProcessedData {
     position: number;
     isGuessed: boolean
 }
+
+export interface GameState {
+    hasSolvedCategories: boolean
+    hasNoMistakesLeft: boolean
+    canDeselect: boolean
+    canSubmit: boolean
+    showGameControls: boolean
+}
+
+export interface PuzzleViewProps {
+    currentDate: Date
+    mistakesLeft: number
+    selectedCells: ProcessedData[]
+    solvedCategories: SolvedCategory[]
+    isGameComplete: boolean
+    disableButton: boolean
+    data: ProcessedData[]
+    gameState: GameState
+    onCellClick: (cell: ProcessedData) => void
+    onShuffleClick: () => void
+    onSubmitClick: () => void
+    onDeselectAll: () => void
+}
