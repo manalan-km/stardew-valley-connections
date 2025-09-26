@@ -14,6 +14,7 @@ import {
 } from '../utils/functions/utilFunctions'
 import { MAX_ITEMS_IN_A_CATEGORY } from '../utils/constants/constants'
 import PuzzleView from './PuzzleViewer'
+import { animate } from 'animejs'
 
 const PuzzleHandler = () => {
     const current_date = new Date()
@@ -108,39 +109,60 @@ const PuzzleHandler = () => {
     }
 
     const handleShuffleClick = () => {
-        const positions = Array.from(Array(16).keys(), (x) => x + 1)
-        const shuffledPositions: number[] = shuffleArray(positions)
+        const elementsToAnimate = document.querySelectorAll('#cell-content')
 
-        const shuffledData = data.map((value, index): ProcessedData => {
-            return {
-                position: shuffledPositions[index],
-                item: value.item,
-                category: value.category,
-                isGuessed: value.isGuessed,
-            }
-        })
+        // Fade out first
+        animate(elementsToAnimate, {
+            opacity: [1, 0],
+            duration: 300,
+            easing: 'easeInQuad',
+            complete: () => {
+                // Shuffle the data while faded out
+                const positions = Array.from(Array(16).keys(), (x) => x + 1)
+                const shuffledPositions: number[] = shuffleArray(positions)
 
-        setData(shuffledData.sort((a, b) => a.position - b.position))
-
-        if (selectedCells.length) {
-            const updatedSelectedCells: ProcessedData[] = []
-            shuffledData.forEach((val) =>
-                selectedCells.forEach((selectedCell) => {
-                    if (
-                        selectedCell.item === val.item &&
-                        selectedCell.category === val.category
-                    ) {
-                        updatedSelectedCells.push({
-                            ...val,
-                            position: val.position,
-                        })
+                const shuffledData = data.map((value, index): ProcessedData => {
+                    return {
+                        position: shuffledPositions[index],
+                        item: value.item,
+                        category: value.category,
+                        isGuessed: value.isGuessed,
                     }
                 })
-            )
-            setSelectedCells(updatedSelectedCells)
-        }
-    }
 
+                setData(shuffledData.sort((a, b) => a.position - b.position))
+
+                if (selectedCells.length) {
+                    const updatedSelectedCells: ProcessedData[] = []
+                    shuffledData.forEach((val) =>
+                        selectedCells.forEach((selectedCell) => {
+                            if (
+                                selectedCell.item === val.item &&
+                                selectedCell.category === val.category
+                            ) {
+                                updatedSelectedCells.push({
+                                    ...val,
+                                    position: val.position,
+                                })
+                            }
+                        })
+                    )
+                    setSelectedCells(updatedSelectedCells)
+                }
+
+                // Wait for React to re-render, then fade in
+                setTimeout(() => {
+                    const newElements =
+                        document.querySelectorAll('#cell-content')
+                    animate(newElements, {
+                        opacity: [0, 1],
+                        duration: 300,
+                        easing: 'easeOutQuad',
+                    })
+                }, 10) // Increased timeout
+            },
+        })
+    }
     const handleSubmitClick = () => {
         const categoryToBeChecked = selectedCells[0].category
         const selectedCell = selectedCells.filter(
