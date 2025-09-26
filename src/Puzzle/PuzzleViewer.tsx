@@ -39,13 +39,14 @@ const PuzzleView = ({
                 <SolvedItems solvedCategories={solvedCategories}></SolvedItems>
             )}
 
-            <div className="flex justify-center">
+            <div className="flex justify-center mx-2">
                 <div className="w-full max-w-md sm:max-w-lg md:max-w-xl">
                     <div className="grid grid-cols-4 gap-2">
                         {data
                             .filter((item: ProcessedData) => !item.isGuessed)
                             .map((item: ProcessedData) => (
                                 <Cell
+                                    id={`${item.position}`}
                                     key={item.position}
                                     content={item.item.toUpperCase()}
                                     isSelected={checkIfCellExist(
