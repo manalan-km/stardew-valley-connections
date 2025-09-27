@@ -22,8 +22,8 @@ const SolvedItems = ({
 
         const elementToAnimate =
             solvedCategoryDivs[solvedCategoryDivs.length - 1]
-        
-            animate(elementToAnimate, {
+
+        animate(elementToAnimate, {
             scale: [1, 1.1, 1],
             duration: 400,
         })
@@ -33,10 +33,7 @@ const SolvedItems = ({
     }, [solvedCategories])
 
     return (
-        <div
-            className="flex justify-center mb-2 mx-2"
-            style={{ border: '1px border black' }}
-        >
+        <div className="flex justify-center mb-2 mx-2">
             <div className="w-full max-w-md sm:max-w-lg md:max-w-xl">
                 {solvedCategories
                     .sort((a, b) => a.solvedOrder - b.solvedOrder)
