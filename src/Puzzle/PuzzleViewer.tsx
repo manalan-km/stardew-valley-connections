@@ -8,6 +8,7 @@ import SolvedItems from './solvedItems/solvedItems'
 import { checkIfCellExist } from '../utils/functions/utilFunctions'
 import { MAX_ITEMS_IN_A_CATEGORY } from '../utils/constants/constants'
 import './PuzzleViewer.css'
+import Confetti from './Confetti/Confetti'
 const PuzzleView = ({
     currentDate,
     mistakesLeft,
@@ -73,6 +74,7 @@ const PuzzleView = ({
 
             {isGameComplete && (
                 <div className="text-center my-8">
+                    <Confetti></Confetti>
                     <h2 className="text-2xl font-bold text-green-600 announcement">
                         Congratulations! You have solved today's puzzle!
                     </h2>
