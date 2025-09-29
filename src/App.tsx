@@ -1,6 +1,6 @@
 import './App.css'
 import Header from './Header/Header'
-import PuzzleHandler from './Puzzle/PuzzleHander'
+import PuzzleHandler from './Puzzle/PuzzleHandler'
 
 function App() {
     return (

@@ -82,6 +82,7 @@ const PuzzleHandler = () => {
                         return category.items.map((item) => ({
                             ...item,
                             category: category.category,
+                            id: `${item.position}`,
                         }))
                     })
                     .sort((a, b) => a.position - b.position)
@@ -123,6 +124,7 @@ const PuzzleHandler = () => {
 
                 const shuffledData = data.map((value, index): ProcessedData => {
                     return {
+                        id: value.id,
                         position: shuffledPositions[index],
                         item: value.item,
                         category: value.category,
@@ -165,6 +167,23 @@ const PuzzleHandler = () => {
     }
     const handleSubmitClick = () => {
         const categoryToBeChecked = selectedCells[0].category
+
+        const selectedCellID: string[] = selectedCells.map((cell) => {
+            return cell.id
+        })
+
+        selectedCellID.forEach((id, index) => {
+            const cell = document.getElementById(id)
+
+            if (cell) {
+                animate(cell, {
+                    scale: [1, 1.1, 1],
+                    duration: 500,
+                    delay: index * 100, // Each animation starts 100ms after the previous
+                })
+            }
+        })
+
         const selectedCell = selectedCells.filter(
             (cellVal) => cellVal.category === categoryToBeChecked
         )
