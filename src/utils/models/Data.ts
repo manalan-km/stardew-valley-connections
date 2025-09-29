@@ -1,12 +1,12 @@
 export interface Item {
     item: string
-    position: number,
+    position: number
     isGuessed: boolean
 }
 
 export interface Category {
     category: string
-    items: Item[],
+    items: Item[]
     isGuessed: boolean
 }
 
@@ -27,10 +27,11 @@ export interface SolvedCategory {
 }
 
 export interface ProcessedData {
-    category: string;
-    item: string;
-    position: number;
+    category: string
+    item: string
+    position: number
     isGuessed: boolean
+    id: string
 }
 
 export interface GameState {
