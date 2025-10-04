@@ -127,7 +127,6 @@ const PuzzleHandler = () => {
 
                     const shuffledData = data.map(
                         (value, index): ProcessedData => {
-                            console.log(value)
                             return {
                                 ...value,
                                 position: shuffledPositions[index],
@@ -179,8 +178,6 @@ const PuzzleHandler = () => {
     const handleSubmitClick = () => {
         const categoryToBeChecked = selectedCells[0].category
 
-        console.log('Selected Cells:', selectedCells)
-
         const selectedCellID: string[] = selectedCells.map((cell) => {
             return cell.id
         })
@@ -193,7 +190,6 @@ const PuzzleHandler = () => {
 
         selectedCellID.forEach((id, index) => {
             const cell = document.getElementById(id)
-            console.log('Animating ', cell, ' Cell!')
             const isLastCell = index === selectedCellID.length - 1
             if (cell) {
                 animationSequencer.add({
@@ -230,18 +226,18 @@ const PuzzleHandler = () => {
                                 setSolvedOrder(solvedOrder + 1)
                                 setSelectedCells([])
                             }
+                            if (!isGuessed) {
+                                const newNumberOfMistakesLeft = mistakesLeft - 1
+                                setMistakesLeft(newNumberOfMistakesLeft)
+                                setSelectedCells([])
+
+                                if (newNumberOfMistakesLeft === 0) {
+                                    setDisableButton(true)
+                                }
+                            }
                         },
                     },
                 })
-            }
-            if (!isGuessed) {
-                const newNumberOfMistakesLeft = mistakesLeft - 1
-                setMistakesLeft(newNumberOfMistakesLeft)
-                setSelectedCells([])
-
-                if (newNumberOfMistakesLeft === 0) {
-                    setDisableButton(true)
-                }
             }
         })
     }
