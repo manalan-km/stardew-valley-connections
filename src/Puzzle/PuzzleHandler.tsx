@@ -121,7 +121,7 @@ const PuzzleHandler = () => {
                 opacity: [1, 0],
                 duration: 300,
                 easing: 'easeInQuad',
-                complete: () => {
+                onComplete: () => {
                     // Shuffle the data while faded out
                     const positions = Array.from(Array(16).keys(), (x) => x + 1)
                     const shuffledPositions: number[] = shuffleArray(positions)

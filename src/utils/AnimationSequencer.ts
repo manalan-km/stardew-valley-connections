@@ -34,12 +34,17 @@ export class AnimationSequencer {
 
         const animation = this.animationQueue.shift()!
 
+        const originalOnComplete = animation.animeParams.onComplete
+
         console.log('Processing target:', animation.targets)
         console.log('Processing animeParams:', animation.animeParams)
 
         animate(animation.targets, {
             ...animation.animeParams,
-            complete: () => {
+            onComplete: (self, e) => {
+                if (originalOnComplete) {
+                    originalOnComplete(self, e)
+                }
                 this.processNext()
             },
         })
