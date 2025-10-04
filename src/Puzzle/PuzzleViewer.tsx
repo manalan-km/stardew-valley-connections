@@ -47,7 +47,7 @@ const PuzzleView = ({
                             .filter((item: ProcessedData) => !item.isGuessed)
                             .map((item: ProcessedData) => (
                                 <Cell
-                                    id={`${item.position}`}
+                                    id={`${item.id}`}
                                     key={item.position}
                                     content={item.item.toUpperCase()}
                                     isSelected={checkIfCellExist(

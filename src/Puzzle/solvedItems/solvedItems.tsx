@@ -1,16 +1,18 @@
-import { animate } from 'animejs'
 import type { SolvedCategory } from '../../utils/models/Data'
 import { useEffect } from 'react'
+import { AnimationSequencer } from '../../utils/AnimationSequencer'
 
 const SolvedItems = ({
     solvedCategories,
 }: {
     solvedCategories: SolvedCategory[]
 }) => {
+    const animationSequencer = new AnimationSequencer()
+
     const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f7ca18']
 
     const getColorByOrder = (solvedOrder: number) => {
-        return colors[solvedOrder - 1] || '#95a5a6' // solvedOrder starts at 1
+        return colors[solvedOrder - 1] || '#95a5a6'
     }
 
     const animateDiv = () => {
@@ -23,9 +25,12 @@ const SolvedItems = ({
         const elementToAnimate =
             solvedCategoryDivs[solvedCategoryDivs.length - 1]
 
-        animate(elementToAnimate, {
-            scale: [1, 1.1, 1],
-            duration: 400,
+        animationSequencer.add({
+            targets: elementToAnimate,
+            animeParams: {
+                scale: [1, 1.1, 1],
+                duration: 400,
+            },
         })
     }
     useEffect(() => {

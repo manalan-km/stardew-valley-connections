@@ -14,9 +14,11 @@ import {
 } from '../utils/functions/utilFunctions'
 import { MAX_ITEMS_IN_A_CATEGORY } from '../utils/constants/constants'
 import PuzzleView from './PuzzleViewer'
-import { animate } from 'animejs'
+import { AnimationSequencer } from '../utils/AnimationSequencer'
 
 const PuzzleHandler = () => {
+    const animationSequencer = new AnimationSequencer()
+
     const current_date = new Date()
 
     const [mistakesLeft, setMistakesLeft] = useState<number>(4)
@@ -112,111 +114,136 @@ const PuzzleHandler = () => {
     const handleShuffleClick = () => {
         const elementsToAnimate = document.querySelectorAll('#cell-content')
 
-        // Fade out first
-        animate(elementsToAnimate, {
-            opacity: [1, 0],
-            duration: 300,
-            easing: 'easeInQuad',
-            complete: () => {
-                // Shuffle the data while faded out
-                const positions = Array.from(Array(16).keys(), (x) => x + 1)
-                const shuffledPositions: number[] = shuffleArray(positions)
+        animationSequencer.add({
+            targets: elementsToAnimate,
+            animeParams: {
+                opacity: [1, 0],
+                duration: 300,
+                easing: 'easeInQuad',
+                onComplete: () => {
+                    // Shuffle the data while faded out
+                    const positions = Array.from(Array(16).keys(), (x) => x + 1)
+                    const shuffledPositions: number[] = shuffleArray(positions)
 
-                const shuffledData = data.map((value, index): ProcessedData => {
-                    return {
-                        id: value.id,
-                        position: shuffledPositions[index],
-                        item: value.item,
-                        category: value.category,
-                        isGuessed: value.isGuessed,
-                    }
-                })
-
-                setData(shuffledData.sort((a, b) => a.position - b.position))
-
-                if (selectedCells.length) {
-                    const updatedSelectedCells: ProcessedData[] = []
-                    shuffledData.forEach((val) =>
-                        selectedCells.forEach((selectedCell) => {
-                            if (
-                                selectedCell.item === val.item &&
-                                selectedCell.category === val.category
-                            ) {
-                                updatedSelectedCells.push({
-                                    ...val,
-                                    position: val.position,
-                                })
+                    const shuffledData = data.map(
+                        (value, index): ProcessedData => {
+                            console.log(value)
+                            return {
+                                ...value,
+                                position: shuffledPositions[index],
+                                item: value.item,
+                                category: value.category,
+                                isGuessed: value.isGuessed,
                             }
-                        })
+                        }
                     )
-                    setSelectedCells(updatedSelectedCells)
-                }
 
-                // Wait for React to re-render, then fade in
-                setTimeout(() => {
-                    const newElements =
-                        document.querySelectorAll('#cell-content')
-                    animate(newElements, {
-                        opacity: [0, 1],
-                        duration: 300,
-                        easing: 'easeOutQuad',
-                    })
-                }, 10) // Increased timeout
+                    setData(
+                        shuffledData.sort((a, b) => a.position - b.position)
+                    )
+
+                    if (selectedCells.length) {
+                        const updatedSelectedCells: ProcessedData[] = []
+                        shuffledData.forEach((val) =>
+                            selectedCells.forEach((selectedCell) => {
+                                if (
+                                    selectedCell.item === val.item &&
+                                    selectedCell.category === val.category
+                                ) {
+                                    updatedSelectedCells.push({
+                                        ...val,
+                                        position: val.position,
+                                    })
+                                }
+                            })
+                        )
+                        setSelectedCells(updatedSelectedCells)
+                    }
+
+                    setTimeout(() => {
+                        const newElements =
+                            document.querySelectorAll('#cell-content')
+                        animationSequencer.add({
+                            targets: newElements,
+                            animeParams: {
+                                opacity: [0, 1],
+                                duration: 300,
+                                easing: 'easeOutQuad',
+                            },
+                        })
+                    }, 10) // Increased timeout
+                },
             },
         })
     }
     const handleSubmitClick = () => {
         const categoryToBeChecked = selectedCells[0].category
 
+        console.log('Selected Cells:', selectedCells)
+
         const selectedCellID: string[] = selectedCells.map((cell) => {
             return cell.id
-        })
-
-        selectedCellID.forEach((id, index) => {
-            const cell = document.getElementById(id)
-
-            if (cell) {
-                animate(cell, {
-                    scale: [1, 1.1, 1],
-                    duration: 500,
-                    delay: index * 100, // Each animation starts 100ms after the previous
-                })
-            }
         })
 
         const selectedCell = selectedCells.filter(
             (cellVal) => cellVal.category === categoryToBeChecked
         )
+        const isGuessed: boolean =
+            selectedCell.length === MAX_ITEMS_IN_A_CATEGORY
 
-        if (selectedCell.length === MAX_ITEMS_IN_A_CATEGORY) {
-            const solvedCategory: SolvedCategory = {
-                category: categoryToBeChecked,
-                items: [...selectedCells],
-                solvedOrder: solvedOrder,
-            }
+        selectedCellID.forEach((id, index) => {
+            const cell = document.getElementById(id)
+            console.log('Animating ', cell, ' Cell!')
+            const isLastCell = index === selectedCellID.length - 1
+            if (cell) {
+                animationSequencer.add({
+                    targets: cell,
+                    animeParams: {
+                        scale: [1, 1.1, 1],
+                        duration: 500,
+                        delay: index * 100,
+                        onComplete: () => {
+                            if (isLastCell && isGuessed) {
+                                const solvedCategory: SolvedCategory = {
+                                    category: categoryToBeChecked,
+                                    items: [...selectedCell],
+                                    solvedOrder: solvedOrder,
+                                }
 
-            setSolvedCategories((prev) => [...prev, solvedCategory])
+                                setSolvedCategories((prev) => [
+                                    ...prev,
+                                    solvedCategory,
+                                ])
 
-            setData((prev) =>
-                prev.map((cell) => {
-                    if (cell.category === categoryToBeChecked) {
-                        cell.isGuessed = true
-                    }
-                    return cell
+                                setData((prev) =>
+                                    prev.map((cell) => {
+                                        if (
+                                            cell.category ===
+                                            categoryToBeChecked
+                                        ) {
+                                            cell.isGuessed = true
+                                        }
+                                        return cell
+                                    })
+                                )
+
+                                setSolvedOrder(solvedOrder + 1)
+                                setSelectedCells([])
+                            }
+                        },
+                    },
                 })
-            )
-
-            setSolvedOrder(solvedOrder + 1)
-            setSelectedCells([])
-        } else {
-            const newNumberOfMistakesLeft = mistakesLeft - 1
-            setMistakesLeft(newNumberOfMistakesLeft)
-            setSelectedCells([])
-
-            if (newNumberOfMistakesLeft === 0) {
-                setDisableButton(true)
             }
-        }
+            if (!isGuessed) {
+                const newNumberOfMistakesLeft = mistakesLeft - 1
+                setMistakesLeft(newNumberOfMistakesLeft)
+                setSelectedCells([])
+
+                if (newNumberOfMistakesLeft === 0) {
+                    setDisableButton(true)
+                }
+            }
+        })
     }
 
     const handleDeselectAll = () => {
