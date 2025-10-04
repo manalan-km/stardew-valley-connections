@@ -2,7 +2,7 @@
 import { useRef } from 'react'
 import './Board.css'
 
-import { animate } from 'animejs'
+import { AnimationSequencer } from '../../utils/AnimationSequencer'
 
 const Cell = ({
     content,
@@ -19,15 +19,20 @@ const Cell = ({
 }) => {
     const textRef = useRef<HTMLSpanElement>(null)
 
+    const animationSequencer = new AnimationSequencer()
+
     const animateButton = (isCellSelected: boolean) => {
         if (!textRef.current) {
             return
         }
 
         if (!isCellSelected) {
-            animate(textRef.current, {
-                scale: [1, 1.1, 1],
-                duration: 400,
+            animationSequencer.add({
+                targets: textRef.current,
+                animeParams: {
+                    scale: [1, 1.1, 1],
+                    duration: 400,
+                },
             })
         }
     }

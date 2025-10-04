@@ -1,12 +1,14 @@
-import { animate } from 'animejs'
 import type { SolvedCategory } from '../../utils/models/Data'
 import { useEffect } from 'react'
+import { AnimationSequencer } from '../../utils/AnimationSequencer'
 
 const SolvedItems = ({
     solvedCategories,
 }: {
     solvedCategories: SolvedCategory[]
 }) => {
+    const animationSequencer = new AnimationSequencer()
+
     const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f7ca18']
 
     const getColorByOrder = (solvedOrder: number) => {
@@ -23,14 +25,17 @@ const SolvedItems = ({
         const elementToAnimate =
             solvedCategoryDivs[solvedCategoryDivs.length - 1]
 
-        animate(elementToAnimate, {
-            scale: [1, 1.1, 1],
-            duration: 400,
+        animationSequencer.add({
+            targets: elementToAnimate,
+            animeParams: {
+                scale: [1, 1.1, 1],
+                duration: 400,
+            },
         })
     }
     useEffect(() => {
         animateDiv()
-    }, [solvedCategories])
+    }, [])
 
     return (
         <div className="flex justify-center mb-2 mx-2">
