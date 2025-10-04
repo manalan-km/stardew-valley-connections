@@ -114,7 +114,6 @@ const PuzzleHandler = () => {
     const handleShuffleClick = () => {
         const elementsToAnimate = document.querySelectorAll('#cell-content')
 
-        // Fade out first
         animationSequencer.add({
             targets: elementsToAnimate,
             animeParams: {
@@ -128,8 +127,9 @@ const PuzzleHandler = () => {
 
                     const shuffledData = data.map(
                         (value, index): ProcessedData => {
+                            console.log(value)
                             return {
-                                id: value.id,
+                                ...value,
                                 position: shuffledPositions[index],
                                 item: value.item,
                                 category: value.category,
@@ -160,7 +160,6 @@ const PuzzleHandler = () => {
                         setSelectedCells(updatedSelectedCells)
                     }
 
-                    // Wait for React to re-render, then fade in
                     setTimeout(() => {
                         const newElements =
                             document.querySelectorAll('#cell-content')
@@ -180,58 +179,71 @@ const PuzzleHandler = () => {
     const handleSubmitClick = () => {
         const categoryToBeChecked = selectedCells[0].category
 
+        console.log('Selected Cells:', selectedCells)
+
         const selectedCellID: string[] = selectedCells.map((cell) => {
             return cell.id
         })
 
+        const selectedCell = selectedCells.filter(
+            (cellVal) => cellVal.category === categoryToBeChecked
+        )
+        const isGuessed: boolean =
+            selectedCell.length === MAX_ITEMS_IN_A_CATEGORY
+
         selectedCellID.forEach((id, index) => {
             const cell = document.getElementById(id)
-
+            console.log('Animating ', cell, ' Cell!')
+            const isLastCell = index === selectedCellID.length - 1
             if (cell) {
                 animationSequencer.add({
                     targets: cell,
                     animeParams: {
                         scale: [1, 1.1, 1],
                         duration: 500,
-                        delay: index * 100, // Each animation starts 100ms after the previous
+                        delay: index * 100,
+                        onComplete: () => {
+                            if (isLastCell && isGuessed) {
+                                const solvedCategory: SolvedCategory = {
+                                    category: categoryToBeChecked,
+                                    items: [...selectedCell],
+                                    solvedOrder: solvedOrder,
+                                }
+
+                                setSolvedCategories((prev) => [
+                                    ...prev,
+                                    solvedCategory,
+                                ])
+
+                                setData((prev) =>
+                                    prev.map((cell) => {
+                                        if (
+                                            cell.category ===
+                                            categoryToBeChecked
+                                        ) {
+                                            cell.isGuessed = true
+                                        }
+                                        return cell
+                                    })
+                                )
+
+                                setSolvedOrder(solvedOrder + 1)
+                                setSelectedCells([])
+                            }
+                        },
                     },
                 })
             }
+            if (!isGuessed) {
+                const newNumberOfMistakesLeft = mistakesLeft - 1
+                setMistakesLeft(newNumberOfMistakesLeft)
+                setSelectedCells([])
+
+                if (newNumberOfMistakesLeft === 0) {
+                    setDisableButton(true)
+                }
+            }
         })
-
-        const selectedCell = selectedCells.filter(
-            (cellVal) => cellVal.category === categoryToBeChecked
-        )
-
-        if (selectedCell.length === MAX_ITEMS_IN_A_CATEGORY) {
-            const solvedCategory: SolvedCategory = {
-                category: categoryToBeChecked,
-                items: [...selectedCells],
-                solvedOrder: solvedOrder,
-            }
-
-            setSolvedCategories((prev) => [...prev, solvedCategory])
-
-            setData((prev) =>
-                prev.map((cell) => {
-                    if (cell.category === categoryToBeChecked) {
-                        cell.isGuessed = true
-                    }
-                    return cell
-                })
-            )
-
-            setSolvedOrder(solvedOrder + 1)
-            setSelectedCells([])
-        } else {
-            const newNumberOfMistakesLeft = mistakesLeft - 1
-            setMistakesLeft(newNumberOfMistakesLeft)
-            setSelectedCells([])
-
-            if (newNumberOfMistakesLeft === 0) {
-                setDisableButton(true)
-            }
-        }
     }
 
     const handleDeselectAll = () => {

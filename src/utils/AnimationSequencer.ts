@@ -13,10 +13,7 @@ export class AnimationSequencer {
     }
 
     add(animation: AnimationSeq) {
-        console.log('The queue before adding the element:', this.animationQueue)
-        console.log('New element added to the queue:', animation)
         this.animationQueue.push(animation)
-        // console.log('The queue after adding the element:', this.animationQueue)
 
         this.playback()
     }
@@ -35,9 +32,6 @@ export class AnimationSequencer {
         const animation = this.animationQueue.shift()!
 
         const originalOnComplete = animation.animeParams.onComplete
-
-        console.log('Processing target:', animation.targets)
-        console.log('Processing animeParams:', animation.animeParams)
 
         animate(animation.targets, {
             ...animation.animeParams,

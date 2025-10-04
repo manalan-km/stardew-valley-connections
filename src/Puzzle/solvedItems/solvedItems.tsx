@@ -12,7 +12,7 @@ const SolvedItems = ({
     const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f7ca18']
 
     const getColorByOrder = (solvedOrder: number) => {
-        return colors[solvedOrder - 1] || '#95a5a6' // solvedOrder starts at 1
+        return colors[solvedOrder - 1] || '#95a5a6'
     }
 
     const animateDiv = () => {
@@ -35,7 +35,7 @@ const SolvedItems = ({
     }
     useEffect(() => {
         animateDiv()
-    }, [])
+    }, [solvedCategories])
 
     return (
         <div className="flex justify-center mb-2 mx-2">
