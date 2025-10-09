@@ -11,7 +11,8 @@ export interface Category {
 }
 
 export interface Data {
-    categories: Category[]
+    categories: Category[],
+    id: string
 }
 
 export interface ICell {
@@ -43,7 +44,6 @@ export interface GameState {
 }
 
 export interface PuzzleViewProps {
-    currentDate: Date
     mistakesLeft: number
     selectedCells: ProcessedData[]
     solvedCategories: SolvedCategory[]

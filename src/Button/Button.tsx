@@ -1,11 +1,13 @@
 const Button = ({
     className,
     content,
+    contentClassName,
     callbackFunction,
     disabled = false,
 }: {
     className: string
     content: string
+    contentClassName: string
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     callbackFunction: Function
     disabled?: boolean
@@ -17,11 +19,10 @@ const Button = ({
                     callbackFunction()
                 }}
                 type="button"
-                className={`p-1 sm:p-2 md:p-3 text-center font-semibold break-words hyphens-auto leading-tight
-                          text-[10px] xs:text-[11px] sm:text-xs md:text-sm lg:text-base  rounded-full px-5 py-3  ${disabled ? '' : 'cursor-pointer'} ${className}`}
+                className={`${className}  ${disabled ? '' : 'cursor-pointer'}`}
                 disabled={disabled}
             >
-                {content}
+                <span className={`${contentClassName}`}>{content}</span>
             </button>
         </>
     )

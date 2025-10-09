@@ -1,16 +1,14 @@
 // PuzzleView.tsx
-import { format } from 'date-fns'
 import type { ProcessedData, PuzzleViewProps } from '../utils/models/Data'
 import Cell from './Board/Board'
 import MistakesIndicator from './MistakesIndicator/MistakesIndicator'
-import Button from './HelperButtons/Button/Button'
+import Button from '../Button/Button'
 import SolvedItems from './solvedItems/solvedItems'
 import { checkIfCellExist } from '../utils/functions/utilFunctions'
 import { MAX_ITEMS_IN_A_CATEGORY } from '../utils/constants/constants'
 import './PuzzleViewer.css'
 import Confetti from './Confetti/Confetti'
 const PuzzleView = ({
-    currentDate,
     mistakesLeft,
     selectedCells,
     solvedCategories,
@@ -23,15 +21,8 @@ const PuzzleView = ({
     onSubmitClick,
     onDeselectAll,
 }: PuzzleViewProps) => {
-    const month_and_date = format(currentDate, 'MMMM dd')
-    const year = format(currentDate, 'yyyy')
-
     return (
         <>
-            <div className="mx-20 my-10 ">
-                <span className="libre-franklin-thin">{`${month_and_date}, ${year}`}</span>
-            </div>
-            <div className="border-b-1 border-gray-200"></div>
             <div className="description flex justify-center my-4">
                 Create four groups of four!
             </div>
@@ -98,19 +89,25 @@ const PuzzleView = ({
                     </div>
                     <div className="flex justify-center">
                         <Button
-                            className="mx-2 border-1 border-black-200 disabled:opacity-25"
+                            className="mx-2 border-1 border-black-200 disabled:opacity-25  p-1 sm:p-2 md:p-3 text-center font-semibold break-words hyphens-auto leading-tight
+                          text-[10px] xs:text-[11px] sm:text-xs md:text-sm lg:text-base  rounded-full px-5 py-3"
                             content="Shuffle"
+                            contentClassName='px-6 py-2'
                             callbackFunction={onShuffleClick}
                         ></Button>
                         <Button
-                            className="mx-2 border-1 border-black-200 disabled:opacity-25"
+                            className="mx-2 border-1 border-black-200 disabled:opacity-25  p-1 sm:p-2 md:p-3 text-center font-semibold break-words hyphens-auto leading-tight
+                          text-[10px] xs:text-[11px] sm:text-xs md:text-sm lg:text-base  rounded-full px-5 py-3"
                             content="Deselect All"
+                            contentClassName='px-6 py-2'
                             callbackFunction={onDeselectAll}
                             disabled={!gameState.canDeselect}
                         ></Button>
                         <Button
-                            className="mx-2 border-1 bg-black text-white border-white-200 disabled:opacity-25"
+                            className="mx-2 border-1 bg-black text-white border-white-200 disabled:opacity-25  p-1 sm:p-2 md:p-3 text-center font-semibold break-words hyphens-auto leading-tight
+                          text-[10px] xs:text-[11px] sm:text-xs md:text-sm lg:text-base  rounded-full px-5 py-3"
                             content="Submit"
+                            contentClassName='px-6 py-2'
                             callbackFunction={onSubmitClick}
                             disabled={!gameState.canSubmit}
                         ></Button>

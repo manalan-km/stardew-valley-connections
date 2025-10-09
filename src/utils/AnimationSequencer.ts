@@ -35,7 +35,6 @@ export class AnimationSequencer {
 
         animate(animation.targets, {
             ...animation.animeParams,
-            // delay: 100,
             onComplete: (self, e) => {
                 if (originalOnComplete) {
                     originalOnComplete(self, e)
