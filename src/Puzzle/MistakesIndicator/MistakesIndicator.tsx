@@ -14,14 +14,11 @@ const MistakesIndicator = ({
     const [displayCount, setDisplayCount] = useState(numberOfMistakesLeft)
 
     useEffect(() => {
-        // Only animate if mistakes decreased (user made a mistake)
         if (numberOfMistakesLeft < prevMistakesRef.current) {
             const elements = document.querySelectorAll('.bubble')
-            console.log('Number of bubbles: ', elements.length)
 
             if (elements.length > 0) {
                 const lastBubbleElement = elements[elements.length - 1]
-                console.log('Last Bubble Element: ', lastBubbleElement)
                 animationSequencer.add({
                     targets: lastBubbleElement,
                     animeParams: {
