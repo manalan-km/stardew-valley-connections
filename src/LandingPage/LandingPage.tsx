@@ -44,7 +44,7 @@ const LandingPage = () => {
                 <div className=" my-5">
                     <p className="font">{`${month_and_date}, ${year}`}</p>
                 </div>
-                //TODO: Loading screen when API is called
+                {/* TODO: Loading screen when API is called */}
                 {/* <div className="">
                     <p className="font">No. 1</p>
                 </div> */}
