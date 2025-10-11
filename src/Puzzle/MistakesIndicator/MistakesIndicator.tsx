@@ -46,7 +46,7 @@ const MistakesIndicator = ({
                 <span>
                     Mistakes Remaining:
                     {Array.from({ length: displayCount }, (_, i) => (
-                        <span key={i} className="bubble mx-0.5"></span>
+                        <span key={i} className="bg-[#5A594E] bubble mx-0.5"></span>
                     ))}
                 </span>
             </div>

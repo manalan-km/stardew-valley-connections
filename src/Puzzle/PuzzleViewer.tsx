@@ -12,7 +12,7 @@ const PuzzleView = ({
     mistakesLeft,
     selectedCells,
     solvedCategories,
-    isGameComplete,
+    isGameSolved,
     disableButton,
     data,
     gameState,
@@ -63,7 +63,7 @@ const PuzzleView = ({
                 </div>
             </div>
 
-            {isGameComplete && (
+            {isGameSolved && !gameState.hasNoMistakesLeft && (
                 <div className="text-center my-8">
                     <Confetti></Confetti>
                     <h2 className="text-2xl font-bold text-green-600 announcement">
@@ -92,14 +92,14 @@ const PuzzleView = ({
                             className="mx-2 border-1 border-black-200 disabled:opacity-25  p-1 sm:p-2 md:p-3 text-center font-semibold break-words hyphens-auto leading-tight
                           text-[10px] xs:text-[11px] sm:text-xs md:text-sm lg:text-base  rounded-full px-5 py-3"
                             content="Shuffle"
-                            contentClassName='px-6 py-2'
+                            contentClassName="px-6 py-2"
                             callbackFunction={onShuffleClick}
                         ></Button>
                         <Button
                             className="mx-2 border-1 border-black-200 disabled:opacity-25  p-1 sm:p-2 md:p-3 text-center font-semibold break-words hyphens-auto leading-tight
                           text-[10px] xs:text-[11px] sm:text-xs md:text-sm lg:text-base  rounded-full px-5 py-3"
                             content="Deselect All"
-                            contentClassName='px-6 py-2'
+                            contentClassName="px-6 py-2"
                             callbackFunction={onDeselectAll}
                             disabled={!gameState.canDeselect}
                         ></Button>
@@ -107,7 +107,7 @@ const PuzzleView = ({
                             className="mx-2 border-1 bg-black text-white border-white-200 disabled:opacity-25  p-1 sm:p-2 md:p-3 text-center font-semibold break-words hyphens-auto leading-tight
                           text-[10px] xs:text-[11px] sm:text-xs md:text-sm lg:text-base  rounded-full px-5 py-3"
                             content="Submit"
-                            contentClassName='px-6 py-2'
+                            contentClassName="px-6 py-2"
                             callbackFunction={onSubmitClick}
                             disabled={!gameState.canSubmit}
                         ></Button>

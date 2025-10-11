@@ -26,6 +26,8 @@ const PuzzleHandler = () => {
         []
     )
     const [isGameComplete, setIsGameComplete] = useState<boolean>(false)
+    const [isGameSolved, setIsGameSolved] = useState<boolean>(false)
+
     const [disableButton, setDisableButton] = useState<boolean>(false)
     const [data, setData] = useState<ProcessedData[]>([])
     const [solvedOrder, setSolvedOrder] = useState<number>(1)
@@ -120,7 +122,6 @@ const PuzzleHandler = () => {
                 duration: 300,
                 easing: 'easeInQuad',
                 onComplete: () => {
-                    // Shuffle the data while faded out
                     const positions = Array.from(Array(16).keys(), (x) => x + 1)
                     const shuffledPositions: number[] = shuffleArray(positions)
 
@@ -169,76 +170,150 @@ const PuzzleHandler = () => {
                                 easing: 'easeOutQuad',
                             },
                         })
-                    }, 10) // Increased timeout
+                    }, 10) 
                 },
             },
         })
     }
+    const solveCategory = (
+        categoryItems: ProcessedData[],
+        category: string,
+        order: number,
+        onComplete?: () => void,
+        showSelection: boolean = false 
+    ) => {
+        const cellIds = categoryItems.map((item) => item.id)
+
+        if (showSelection) {
+            cellIds.forEach((id, index) => {
+                setTimeout(() => {
+                    const cell = document.getElementById(id)
+                    if (cell) {
+                        cell.classList.add('bg-[#5A594E]', 'text-white')
+                        cell.classList.remove('bg-[#efefe6]', 'text-black')
+                    }
+                }, index * 150) 
+            })
+        }
+
+        const animationDelay = showSelection ? cellIds.length * 150 + 300 : 0
+
+        setTimeout(() => {
+            cellIds.forEach((id, index) => {
+                const cell = document.getElementById(id)
+                const isLastCell = index === cellIds.length - 1
+
+                if (cell) {
+                    animationSequencer.add({
+                        targets: cell,
+                        animeParams: {
+                            scale: [1, 1.15, 1],
+                            duration: 600, 
+                            delay: index * 150, 
+                            easing: 'easeOutElastic(1, .5)', 
+                            onComplete: () => {
+                                if (isLastCell) {
+                                    const solvedCategory: SolvedCategory = {
+                                        category: category,
+                                        items: categoryItems,
+                                        solvedOrder: order,
+                                    }
+
+                                    setSolvedCategories((prev) => [
+                                        ...prev,
+                                        solvedCategory,
+                                    ])
+                                    setData((prev) =>
+                                        prev.map((cell) =>
+                                            cell.category === category
+                                                ? { ...cell, isGuessed: true }
+                                                : cell
+                                        )
+                                    )
+
+                                    if (onComplete) onComplete()
+                                }
+                            },
+                        },
+                    })
+                }
+            })
+        }, animationDelay)
+    }
+
     const handleSubmitClick = () => {
+        if (selectedCells.length === 0) return
+
         const categoryToBeChecked = selectedCells[0].category
-
-        const selectedCellID: string[] = selectedCells.map((cell) => {
-            return cell.id
-        })
-
         const selectedCell = selectedCells.filter(
             (cellVal) => cellVal.category === categoryToBeChecked
         )
-        const isGuessed: boolean =
-            selectedCell.length === MAX_ITEMS_IN_A_CATEGORY
+        const isGuessed = selectedCell.length === MAX_ITEMS_IN_A_CATEGORY
 
-        selectedCellID.forEach((id, index) => {
-            const cell = document.getElementById(id)
-            const isLastCell = index === selectedCellID.length - 1
-            if (cell) {
-                animationSequencer.add({
-                    targets: cell,
-                    animeParams: {
-                        scale: [1, 1.1, 1],
-                        duration: 500,
-                        delay: index * 100,
-                        onComplete: () => {
-                            if (isLastCell && isGuessed) {
-                                const solvedCategory: SolvedCategory = {
-                                    category: categoryToBeChecked,
-                                    items: [...selectedCell],
-                                    solvedOrder: solvedOrder,
-                                }
+        if (isGuessed) {
+            solveCategory(
+                selectedCell,
+                categoryToBeChecked,
+                solvedOrder,
+                () => {
+                    setSolvedOrder(solvedOrder + 1)
+                    setSelectedCells([])
+                },
+                false
+            )
+        } else {
+            const newNumberOfMistakesLeft = mistakesLeft - 1
+            setMistakesLeft(newNumberOfMistakesLeft)
+            setSelectedCells([])
 
-                                setSolvedCategories((prev) => [
-                                    ...prev,
-                                    solvedCategory,
-                                ])
-
-                                setData((prev) =>
-                                    prev.map((cell) => {
-                                        if (
-                                            cell.category ===
-                                            categoryToBeChecked
-                                        ) {
-                                            cell.isGuessed = true
-                                        }
-                                        return cell
-                                    })
-                                )
-
-                                setSolvedOrder(solvedOrder + 1)
-                                setSelectedCells([])
-                            }
-                            if (!isGuessed) {
-                                const newNumberOfMistakesLeft = mistakesLeft - 1
-                                setMistakesLeft(newNumberOfMistakesLeft)
-                                setSelectedCells([])
-
-                                if (newNumberOfMistakesLeft === 0) {
-                                    setDisableButton(true)
-                                }
-                            }
-                        },
-                    },
-                })
+            if (newNumberOfMistakesLeft === 0) {
+                setDisableButton(true)
+                autoSolve()
             }
-        })
+        }
+    }
+
+    const autoSolve = () => {
+        const unguessedData = data.filter((item) => !item.isGuessed)
+        const remainingCategories = [
+            ...new Set(unguessedData.map((item) => item.category)),
+        ]
+
+        let currentOrder = solvedOrder
+        let categoryIndex = 0
+
+        const solveNext = () => {
+            if (categoryIndex >= remainingCategories.length) {
+                setIsGameComplete(true)
+                return
+            }
+
+            const category = remainingCategories[categoryIndex]
+            const categoryItems = unguessedData.filter(
+                (item) => item.category === category
+            )
+
+            if (categoryItems.length === MAX_ITEMS_IN_A_CATEGORY) {
+                solveCategory(
+                    categoryItems,
+                    category,
+                    currentOrder,
+                    () => {
+                        setTimeout(() => {
+                            categoryIndex++
+                            currentOrder++
+                            solveNext()
+                        }, 800)
+                    },
+                    true
+                )
+            } else {
+                categoryIndex++
+                solveNext()
+            }
+        }
+
+        solveNext()
     }
 
     const handleDeselectAll = () => {
@@ -247,6 +322,7 @@ const PuzzleHandler = () => {
 
     useEffect(() => {
         if (solvedCategories.length === 4) {
+            setIsGameSolved(true)
             setIsGameComplete(true)
             setDisableButton(true)
         }
@@ -265,7 +341,7 @@ const PuzzleHandler = () => {
             mistakesLeft={mistakesLeft}
             selectedCells={selectedCells}
             solvedCategories={solvedCategories}
-            isGameComplete={isGameComplete}
+            isGameSolved={isGameSolved}
             disableButton={disableButton}
             data={data}
             gameState={gameState}
