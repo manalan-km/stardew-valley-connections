@@ -11,7 +11,7 @@ export interface Category {
 }
 
 export interface Data {
-    categories: Category[],
+    categories: Category[]
     id: string
 }
 
@@ -47,7 +47,7 @@ export interface PuzzleViewProps {
     mistakesLeft: number
     selectedCells: ProcessedData[]
     solvedCategories: SolvedCategory[]
-    isGameComplete: boolean
+    isGameSolved: boolean
     disableButton: boolean
     data: ProcessedData[]
     gameState: GameState
