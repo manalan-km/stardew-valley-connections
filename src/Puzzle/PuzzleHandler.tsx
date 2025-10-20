@@ -76,7 +76,7 @@ const PuzzleHandler = () => {
         const url =
             import.meta.env.SV_API_BASE_URL +
             '/challenge/' +
-            format(current_date, 'yyyy-dd-MM')
+            format(current_date, 'yyyy-MM-dd')
         fetch(url)
             .then((response) => response.json())
             .then((api_data: Data) => {
