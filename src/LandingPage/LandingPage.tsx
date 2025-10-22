@@ -1,5 +1,5 @@
 import './LandingPage.css'
-import image from '../../public/stardew-connexions-landing-page.png'
+import image from '../assets/stardew-connexions-landing-page.png'
 import Button from '../Button/Button'
 import { useNavigate } from 'react-router'
 import { format } from 'date-fns'
