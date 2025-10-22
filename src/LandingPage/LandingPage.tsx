@@ -3,6 +3,7 @@ import image from '../assets/stardew-connexions-landing-page.png'
 import Button from '../Button/Button'
 import { useNavigate } from 'react-router'
 import { format } from 'date-fns'
+import Login from '../Login/Login'
 const LandingPage = () => {
     const navigator = useNavigate()
 
@@ -31,15 +32,7 @@ const LandingPage = () => {
                     ></Button>
                 </div>
                 <div className="my-2">
-                    <Button
-                        className="mx-2 px-5 border-1 border-black-200 p-1 sm:p-2 md:p-3 text-center font-semibold break-words hyphens-auto leading-tight
-                          text-[10px] xs:text-[11px] sm:text-xs md:text-sm lg:text-base rounded-full py-3"
-                        content="Login"
-                        contentClassName="px-15"
-                        callbackFunction={() => {
-                            navigator('/login')
-                        }}
-                    ></Button>
+                    <Login></Login>
                 </div>
                 <div className=" my-5">
                     <p className="font">{`${month_and_date}, ${year}`}</p>
