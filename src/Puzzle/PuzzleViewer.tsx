@@ -1,4 +1,3 @@
-// PuzzleView.tsx
 import type { ProcessedData, PuzzleViewProps } from '../utils/models/Data'
 import Cell from './Board/Board'
 import MistakesIndicator from './MistakesIndicator/MistakesIndicator'
@@ -22,7 +21,7 @@ const PuzzleView = ({
     onDeselectAll,
 }: PuzzleViewProps) => {
     return (
-        <>
+        <div>
             <div className="description flex justify-center my-4">
                 Create four groups of four!
             </div>
@@ -87,34 +86,34 @@ const PuzzleView = ({
                             numberOfMistakesLeft={mistakesLeft}
                         ></MistakesIndicator>
                     </div>
-                    <div className="flex justify-center">
+                    <div className="flex justify-center px-2 w-full">
                         <Button
-                            className="mx-2 border-1 border-black-200 disabled:opacity-25  p-1 sm:p-2 md:p-3 text-center font-semibold break-words hyphens-auto leading-tight
-                          text-[10px] xs:text-[11px] sm:text-xs md:text-sm lg:text-base  rounded-full px-5 py-3"
+                            className="mx-1 sm:mx-2 border-1 border-black-200 disabled:opacity-25 p-1 sm:p-2 md:p-3 text-center font-semibold break-words hyphens-auto leading-tight
+              text-[10px] xs:text-[11px] sm:text-xs md:text-sm lg:text-base rounded-full"
                             content="Shuffle"
-                            contentClassName="px-6 py-2"
+                            contentClassName="px-3 sm:px-6 py-2"
                             callbackFunction={onShuffleClick}
                         ></Button>
                         <Button
-                            className="mx-2 border-1 border-black-200 disabled:opacity-25  p-1 sm:p-2 md:p-3 text-center font-semibold break-words hyphens-auto leading-tight
-                          text-[10px] xs:text-[11px] sm:text-xs md:text-sm lg:text-base  rounded-full px-5 py-3"
+                            className="mx-1 sm:mx-2 border-1 border-black-200 disabled:opacity-25 p-1 sm:p-2 md:p-3 text-center font-semibold break-words hyphens-auto leading-tight
+              text-[10px] xs:text-[11px] sm:text-xs md:text-sm lg:text-base rounded-full"
                             content="Deselect All"
-                            contentClassName="px-6 py-2"
+                            contentClassName="px-2 sm:px-6 py-2"
                             callbackFunction={onDeselectAll}
                             disabled={!gameState.canDeselect}
                         ></Button>
                         <Button
-                            className="mx-2 border-1 bg-black text-white border-white-200 disabled:opacity-25  p-1 sm:p-2 md:p-3 text-center font-semibold break-words hyphens-auto leading-tight
-                          text-[10px] xs:text-[11px] sm:text-xs md:text-sm lg:text-base  rounded-full px-5 py-3"
+                            className="mx-1 sm:mx-2 border-1 bg-black text-white border-white-200 disabled:opacity-25 p-1 sm:p-2 md:p-3 text-center font-semibold break-words hyphens-auto leading-tight
+              text-[10px] xs:text-[11px] sm:text-xs md:text-sm lg:text-base rounded-full"
                             content="Submit"
-                            contentClassName="px-6 py-2"
+                            contentClassName="px-3 sm:px-6 py-2"
                             callbackFunction={onSubmitClick}
                             disabled={!gameState.canSubmit}
                         ></Button>
                     </div>
                 </>
             )}
-        </>
+        </div>
     )
 }
 

@@ -31,7 +31,7 @@ const Header = () => {
                         onClick={() => setOpenStats(true)}
                         style={{ cursor: 'pointer' }}
                     >
-                        <MdOutlineLeaderboard size={30} />
+                        <MdOutlineLeaderboard size={'1.5rem'} />
                     </button>
 
                     <button
@@ -39,7 +39,7 @@ const Header = () => {
                         onClick={() => setOpenHowToPlay(true)}
                         style={{ cursor: 'pointer' }}
                     >
-                        <BsQuestionCircle size={30} />
+                        <BsQuestionCircle size={'1.5rem'} />
                     </button>
 
                     <Modal

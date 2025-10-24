@@ -13,7 +13,7 @@ const LandingPage = () => {
 
     return (
         <>
-            <div className="bg-[#f99602] flex flex-col justify-center items-center h-200">
+            <div className="bg-[#f99602] flex flex-col justify-center items-center h-180">
                 <div className="my-2">
                     <img src={image} alt="" />
                 </div>
