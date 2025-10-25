@@ -28,13 +28,15 @@ function App() {
                 setApiData(api_data)
 
                 setIsApiError(false)
+
+                setTimeout(() => {
+                    setIsApiLoading(false)
+                }, 500)
             })
             .catch((err) => {
                 console.log(err.message)
                 setIsApiError(true)
             })
-
-        setIsApiLoading(false)
     }, [])
     if (isApiError === true) {
         return (
