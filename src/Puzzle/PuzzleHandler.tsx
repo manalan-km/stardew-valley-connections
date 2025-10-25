@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { format } from 'date-fns'
 import type {
     Category,
     Data,
@@ -15,10 +14,8 @@ import { MAX_ITEMS_IN_A_CATEGORY } from '../utils/constants/constants'
 import PuzzleView from './PuzzleViewer'
 import { AnimationSequencer } from '../utils/AnimationSequencer'
 
-const PuzzleHandler = () => {
+const PuzzleHandler = ({ APIData }: { APIData: Data }) => {
     const animationSequencer = new AnimationSequencer()
-
-    const current_date = new Date()
 
     const [mistakesLeft, setMistakesLeft] = useState<number>(4)
     const [selectedCells, setSelectedCells] = useState<ProcessedData[]>([])
@@ -73,29 +70,18 @@ const PuzzleHandler = () => {
     }
 
     useEffect(() => {
-        const url =
-            import.meta.env.SV_API_BASE_URL +
-            '/challenge/' +
-            format(current_date, 'yyyy-MM-dd')
-        fetch(url)
-            .then((response) => response.json())
-            .then((api_data: Data) => {
-                const processedData: ProcessedData[] = api_data.categories
-                    .flatMap((category: Category) => {
-                        return category.items.map((item) => ({
-                            ...item,
-                            category: category.category,
-                            id: `${item.position}`,
-                        }))
-                    })
-                    .sort((a, b) => a.position - b.position)
-                setData(processedData)
-                filterGuessedCategories(processedData)
+        const processedData: ProcessedData[] = APIData.categories
+            .flatMap((category: Category) => {
+                return category.items.map((item) => ({
+                    ...item,
+                    category: category.category,
+                    id: `${item.position}`,
+                }))
             })
-            .catch((err) => {
-                console.log(err.message)
-            })
-    }, [])
+            .sort((a, b) => a.position - b.position)
+        setData(processedData)
+        filterGuessedCategories(processedData)
+    }, [APIData])
 
     const handleCellClick = (selectedCell: ProcessedData) => {
         setSelectedCells((prev) => {
@@ -170,7 +156,7 @@ const PuzzleHandler = () => {
                                 easing: 'easeOutQuad',
                             },
                         })
-                    }, 10) 
+                    }, 10)
                 },
             },
         })
@@ -180,7 +166,7 @@ const PuzzleHandler = () => {
         category: string,
         order: number,
         onComplete?: () => void,
-        showSelection: boolean = false 
+        showSelection: boolean = false
     ) => {
         const cellIds = categoryItems.map((item) => item.id)
 
@@ -192,7 +178,7 @@ const PuzzleHandler = () => {
                         cell.classList.add('bg-[#5A594E]', 'text-white')
                         cell.classList.remove('bg-[#efefe6]', 'text-black')
                     }
-                }, index * 150) 
+                }, index * 150)
             })
         }
 
@@ -208,9 +194,9 @@ const PuzzleHandler = () => {
                         targets: cell,
                         animeParams: {
                             scale: [1, 1.15, 1],
-                            duration: 600, 
-                            delay: index * 150, 
-                            easing: 'easeOutElastic(1, .5)', 
+                            duration: 600,
+                            delay: index * 150,
+                            easing: 'easeOutElastic(1, .5)',
                             onComplete: () => {
                                 if (isLastCell) {
                                     const solvedCategory: SolvedCategory = {
