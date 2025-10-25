@@ -7,9 +7,10 @@
     line-weight: 28px;
     italic: 0;
 }
-.font {
-    font-family: 'Libre Franklin', sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 600;
-    font-style: normal;
+.LandingPageFont {
+font-family: 'Libre Franklin', sans-serif;
+font-optical-sizing: auto;
+font-weight: 800;
+font-size: 0.75rem
+font-style: normal;
 }
