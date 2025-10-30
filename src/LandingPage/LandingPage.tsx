@@ -1,7 +1,6 @@
 import './LandingPage.css'
 import image from '../assets/stardew-connexions-landing-page.png'
 import Button from '../Button/Button'
-import { useNavigate } from 'react-router'
 
 import { useEffect } from 'react'
 
@@ -10,6 +9,8 @@ import { useState } from 'react'
 import Modal from '../Modal/Modal'
 import Skeleton from '../Skeleton/Skeleton'
 import { AnimationSequencer } from '../utils/AnimationSequencer'
+import { emitPlayClicked } from '../utils/events/events'
+
 const Login = ({ loading }: { loading: boolean }) => {
     const [openLogin, setOpenLogin] = useState<boolean>(false)
     return (
@@ -95,8 +96,6 @@ const LandingPage = ({
     challengeID: string
     isAPIError: boolean
 }) => {
-    const navigator = useNavigate()
-
     const currentDate: Date = new Date()
     const month_and_date = format(currentDate, 'MMMM dd')
     const year = format(currentDate, 'yyyy')
@@ -168,7 +167,7 @@ const LandingPage = ({
                     content="Play"
                     contentClassName="px-15 text-white"
                     callbackFunction={() => {
-                        navigator('/challenge')
+                        emitPlayClicked()
                     }}
                     loading={isAPILoading}
                     skeletonColor="#000000"

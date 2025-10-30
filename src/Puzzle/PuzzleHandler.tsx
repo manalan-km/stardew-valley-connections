@@ -70,6 +70,27 @@ const PuzzleHandler = ({ APIData }: { APIData: Data }) => {
     }
 
     useEffect(() => {
+        if (data.length === 0) return // Don't animate if there's no data yet
+
+        const elementsToAnimate = document.querySelectorAll(
+            '#cell-content, .utilButton'
+        )
+
+        if (elementsToAnimate.length === 0) return // Safety check
+
+        setTimeout(() => {
+            animationSequencer.add({
+                targets: elementsToAnimate,
+                animeParams: {
+                    opacity: [0, 1],
+                    duration: 800,
+                    easing: 'easeOutQuad',
+                },
+            })
+        }, 10)
+    }, [data.length])
+
+    useEffect(() => {
         const processedData: ProcessedData[] = APIData.categories
             .flatMap((category: Category) => {
                 return category.items.map((item) => ({

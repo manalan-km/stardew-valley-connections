@@ -1,4 +1,3 @@
-import { BrowserRouter, Routes, Route } from 'react-router'
 import './App.css'
 import Footer from './Footer/Footer'
 import Header from './Header/Header'
@@ -7,6 +6,7 @@ import PuzzleHandler from './Puzzle/PuzzleHandler'
 import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import type { Data } from './utils/models/Data'
+import { EVENTS } from './utils/events/events'
 
 const current_date = new Date()
 
@@ -14,6 +14,18 @@ function App() {
     const [apiData, setApiData] = useState<Data>({ categories: [], id: '' })
     const [isApiError, setIsApiError] = useState<boolean>(false)
     const [isApiLoading, setIsApiLoading] = useState<boolean>(true)
+    const [view, setView] = useState<'LandingPage' | 'Challenge'>('LandingPage')
+    useEffect(() => {
+        const handlePlayClicked = () => {
+            setView('Challenge')
+        }
+
+        document.addEventListener(EVENTS.PLAY_CLICKED, handlePlayClicked)
+
+        return () => {
+            document.removeEventListener(EVENTS.PLAY_CLICKED, handlePlayClicked)
+        }
+    })
 
     useEffect(() => {
         setIsApiLoading(true)
@@ -46,30 +58,21 @@ function App() {
         )
     } else {
         return (
-            <BrowserRouter>
-                <div className="flex flex-col h-screen">
-                    <Header />
-                    <main className="flex-1 overflow-auto">
-                        <Routes>
-                            <Route
-                                path="/"
-                                element={
-                                    <LandingPage
-                                        challengeID={apiData.id}
-                                        isAPILoading={isApiLoading}
-                                        isAPIError={isApiError}
-                                    />
-                                }
-                            />
-                            <Route
-                                path="/challenge"
-                                element={<PuzzleHandler APIData={apiData} />}
-                            />
-                        </Routes>
-                    </main>
-                    <Footer />
-                </div>
-            </BrowserRouter>
+            <div className="flex flex-col h-screen">
+                <Header />
+                <main className="flex-1 overflow-auto">
+                    {view === 'LandingPage' ? (
+                        <LandingPage
+                            challengeID={apiData.id}
+                            isAPILoading={isApiLoading}
+                            isAPIError={isApiError}
+                        />
+                    ) : (
+                        <PuzzleHandler APIData={apiData} />
+                    )}
+                </main>
+                <Footer />
+            </div>
         )
     }
 }
