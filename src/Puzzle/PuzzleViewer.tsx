@@ -88,8 +88,8 @@ const PuzzleView = ({
                     </div>
                     <div className="flex justify-center px-2 w-full">
                         <Button
-                            id='shuffle'
-                            className="mx-1 sm:mx-2 border-1 border-black-200 disabled:opacity-25 p-1 sm:p-2 md:p-3 text-center font-semibold break-words hyphens-auto leading-tight
+                            id="shuffle"
+                            className="utilButton mx-1 sm:mx-2 border-1 border-black-200 disabled:opacity-25 p-1 sm:p-2 md:p-3 text-center font-semibold break-words hyphens-auto leading-tight
               text-[10px] xs:text-[11px] sm:text-xs md:text-sm lg:text-base rounded-full"
                             content="Shuffle"
                             contentClassName="px-3 sm:px-6 py-2"
@@ -97,7 +97,7 @@ const PuzzleView = ({
                         ></Button>
                         <Button
                             id="deselect"
-                            className="mx-1 sm:mx-2 border-1 border-black-200 disabled:opacity-25 p-1 sm:p-2 md:p-3 text-center font-semibold break-words hyphens-auto leading-tight
+                            className="utilButton mx-1 sm:mx-2 border-1 border-black-200 disabled:opacity-25 p-1 sm:p-2 md:p-3 text-center font-semibold break-words hyphens-auto leading-tight
               text-[10px] xs:text-[11px] sm:text-xs md:text-sm lg:text-base rounded-full"
                             content="Deselect All"
                             contentClassName="px-2 sm:px-6 py-2"
@@ -105,8 +105,8 @@ const PuzzleView = ({
                             disabled={!gameState.canDeselect}
                         ></Button>
                         <Button
-                            id='submit'
-                            className="mx-1 sm:mx-2 border-1 bg-black text-white border-white-200 disabled:opacity-25 p-1 sm:p-2 md:p-3 text-center font-semibold break-words hyphens-auto leading-tight
+                            id="submit"
+                            className="utilButton mx-1 sm:mx-2 border-1 bg-black text-white border-white-200 disabled:opacity-25 p-1 sm:p-2 md:p-3 text-center font-semibold break-words hyphens-auto leading-tight
               text-[10px] xs:text-[11px] sm:text-xs md:text-sm lg:text-base rounded-full"
                             content="Submit"
                             contentClassName="px-3 sm:px-6 py-2"
