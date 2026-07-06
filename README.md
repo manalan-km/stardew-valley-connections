@@ -1,69 +1,56 @@
-# React + TypeScript + Vite
+# Stardew Valley Connections
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A daily word-association puzzle game inspired by the NYT Connections format, themed around Stardew Valley. Sixteen items, four hidden groups, four guesses to spare — find what connects them.
 
-Currently, two official plugins are available:
+> **Status:** Playable and in development, working towards public release. Backend lives in [stardew-valley-connections-api](https://github.com/manalan-km/stardew-valley-connections-api).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+<!-- TODO: add a screenshot or short GIF here — for a game, this is the single highest-value thing a README can have -->
 
-## Expanding the ESLint configuration
+## How it works
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- A new puzzle is generated daily by the backend and served over its REST API.
+- Players group 16 Stardew Valley items (crops, fish, villagers, and more) into 4 categories of 4.
+- User accounts are handled by the backend through Supabase.
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Tech
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+| Area | Choice |
+| --- | --- |
+| Framework | React 19 + TypeScript, built with Vite 7 |
+| Styling | Tailwind CSS 4 |
+| Animations | anime.js v4, orchestrated through a singleton AnimationSequencer so game animations run as ordered sequences rather than competing timelines |
+| Architecture | Smart/dumb component split: container components own state and API calls, presentational components stay pure |
+| Tooling | pnpm, ESLint, Prettier, date-fns |
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Running locally
+
+Requires Node.js 20+ and pnpm.
+
+```bash
+git clone https://github.com/manalan-km/stardew-valley-connections.git
+cd stardew-valley-connections
+pnpm install
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The app expects the API to be running — see the [API repo](https://github.com/manalan-km/stardew-valley-connections-api) for setup.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Configuration
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# .env.local
+SV_API_BASE_URL="http://127.0.0.1:8000"
 ```
+
+## Scripts
+
+```bash
+pnpm dev       # start dev server with HMR
+pnpm build     # type-check (tsc -b) and build for production
+pnpm lint      # run ESLint
+pnpm preview   # preview the production build
+```
+
+## Disclaimer
+
+This is a non-commercial fan project. Stardew Valley and its assets belong to ConcernedApe; this project is not affiliated with or endorsed by ConcernedApe.
