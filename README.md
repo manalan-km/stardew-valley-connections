@@ -1,6 +1,6 @@
 # Stardew Valley Connections
 
-A daily word-association puzzle game inspired by the NYT Connections format, themed around Stardew Valley. Sixteen items, four hidden groups, four guesses to spare — find what connects them.
+A daily word-association puzzle game inspired by the NYT Connections format, themed around Stardew Valley. Sixteen items, four hidden groups, four guesses to spare and find what connects them.
 
 > **Status:** Playable and in development, working towards public release. Backend lives in [stardew-valley-connections-api](https://github.com/manalan-km/stardew-valley-connections-api).
 
